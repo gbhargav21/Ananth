@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Classifier</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: #f1f1f1;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">URL Classifier</a>
+    </nav>
+
+    <div class="container mt-5">
+        <h1>URL Classifier</h1>
+        <form id="url-form">
+            <div class="form-group">
+                <label for="url">Enter URL:</label>
+                <input type="text" id="url" name="url" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Predict</button>
+        </form>
+        <div id="result" style="display:none;" class="mt-3">
+            <h2>Predicted URL Type: <span id="url-type"></span></h2>
+        </div>
+        <div id="spinner" style="display:none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>URL Classifier &copy; 2023</p>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#url-form").submit(function (event) {
+                event.preventDefault();
+                var form_data = $(this).serialize();
+                $("#spinner").show();
+                $.ajax({
+                    type: "POST",
+                    url: "/predict",
+                    data: form_data,
+                    success: function (response) {
+                        $("#url-type").text(response.result);
+                        $("#result").show();
+                        $("#spinner").hide();
+                    },
+                    error: function (error) {
+                        console.log(error);
+                        $("#spinner").hide();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
